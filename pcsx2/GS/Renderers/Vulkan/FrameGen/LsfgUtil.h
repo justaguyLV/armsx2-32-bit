@@ -38,15 +38,15 @@ public:
     DescriptorSets(const DescriptorSets&) = delete;
     DescriptorSets& operator=(const DescriptorSets&) = delete;
     DescriptorSets(DescriptorSets&& o) noexcept
-        : device{std::exchange(o.device, VK_NULL_HANDLE)},
-          pool{std::exchange(o.pool, VK_NULL_HANDLE)}, sets{std::move(o.sets)} {
+        : device{std::exchange(o.device, decltype(o.device){})},
+          pool{std::exchange(o.pool, decltype(o.pool){})}, sets{std::move(o.sets)} {
         o.sets.clear();
     }
     DescriptorSets& operator=(DescriptorSets&& o) noexcept {
         if (this != &o) {
             Destroy();
-            device = std::exchange(o.device, VK_NULL_HANDLE);
-            pool = std::exchange(o.pool, VK_NULL_HANDLE);
+            device = std::exchange(o.device, decltype(o.device){});
+            pool = std::exchange(o.pool, decltype(o.pool){});
             sets = std::move(o.sets);
             o.sets.clear();
         }

@@ -65,8 +65,8 @@ namespace Vulkan
 			Handle(const Handle&) = delete;
 			Handle& operator=(const Handle&) = delete;
 			Handle(Handle&& o) noexcept
-				: m_device(std::exchange(o.m_device, VK_NULL_HANDLE))
-				, m_handle(std::exchange(o.m_handle, VK_NULL_HANDLE))
+				: m_device(std::exchange(o.m_device, decltype(o.m_device){}))
+				, m_handle(std::exchange(o.m_handle, decltype(o.m_handle){}))
 			{
 			}
 			Handle& operator=(Handle&& o) noexcept
@@ -74,8 +74,8 @@ namespace Vulkan
 				if (this != &o)
 				{
 					Destroy();
-					m_device = std::exchange(o.m_device, VK_NULL_HANDLE);
-					m_handle = std::exchange(o.m_handle, VK_NULL_HANDLE);
+					m_device = std::exchange(o.m_device, decltype(o.m_device){});
+					m_handle = std::exchange(o.m_handle, decltype(o.m_handle){});
 				}
 				return *this;
 			}

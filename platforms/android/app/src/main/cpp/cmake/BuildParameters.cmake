@@ -183,7 +183,7 @@ elseif(ANDROID AND ("${_PCSX2_TARGET_PROCESSOR}" STREQUAL "armv7-a" OR "${_PCSX2
 	set(ARCH_ARM32 TRUE)
 	message(STATUS "Building for Android (ARMv7, 32-bit, interpreter only).")
 	list(APPEND PCSX2_DEFS ARMSX2_ARM32=1 ARMSX2_NO_JIT=1 _FILE_OFFSET_BITS=64 OVERRIDE_HOST_PAGE_SIZE=0x1000 OVERRIDE_HOST_CACHE_LINE_SIZE=64)
-	add_compile_options("-mfpu=neon" "-mfloat-abi=softfp")
+	add_compile_options("-mfpu=neon" "-mfloat-abi=softfp" "-fsigned-char" "-ferror-limit=0")
 else()
 	message(FATAL_ERROR "Unsupported architecture: ${_PCSX2_TARGET_PROCESSOR}")
 endif()
