@@ -12,14 +12,14 @@ jobs:
       run:
         working-directory: platforms/android
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
       - name: Install NDK + CMake
@@ -47,7 +47,7 @@ jobs:
           git commit -qm "log for ${GITHUB_SHA}"
           git push -f origin buildlogs
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: armsx2-android-v7a
           path: platforms/android/app/build/outputs/apk/**/*.apk
