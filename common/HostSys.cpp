@@ -45,6 +45,15 @@ static void MultiPause()
 	__asm__ __volatile__("isb");
 	__asm__ __volatile__("isb");
 	__asm__ __volatile__("isb");
+#elif defined(ARCH_ARM32)
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
+	__asm__ __volatile__("yield");
 #else
 #error Unknown architecture.
 #endif

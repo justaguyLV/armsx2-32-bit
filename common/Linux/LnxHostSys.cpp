@@ -505,6 +505,10 @@ void PageFaultHandler::SignalHandler(int sig, siginfo_t* info, void* ctx)
 #elif defined(ARCH_ARM64)
 	void* const exception_pc = reinterpret_cast<void*>(static_cast<ucontext_t*>(ctx)->uc_mcontext.pc);
 	const bool is_write = IsWriteFault(static_cast<const ucontext_t*>(ctx));
+#elif defined(ARCH_ARM32)
+	void* const exception_pc = reinterpret_cast<void*>(static_cast<ucontext_t*>(ctx)->uc_mcontext.arm_pc);
+	// DFSR.WnR is bit 11 of the kernel-reported error code.
+	const bool is_write = (static_cast<ucontext_t*>(ctx)->uc_mcontext.error_code & (1u << 11)) != 0;
 #endif
 
 #elif defined(__FreeBSD__)
