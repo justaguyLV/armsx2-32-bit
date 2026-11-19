@@ -179,6 +179,11 @@ elseif("${_PCSX2_TARGET_PROCESSOR}" STREQUAL "arm64" OR "${_PCSX2_TARGET_PROCESS
 		# Value of std::hardware_destructive_interference_size for ARM64 on MSVC toolset 14.40.33807
 		list(APPEND PCSX2_DEFS OVERRIDE_HOST_CACHE_LINE_SIZE=64)
 	endif()
+elseif(ANDROID AND ("${_PCSX2_TARGET_PROCESSOR}" STREQUAL "armv7-a" OR "${_PCSX2_TARGET_PROCESSOR}" STREQUAL "armv7" OR "${_PCSX2_TARGET_PROCESSOR}" STREQUAL "arm" OR "${CMAKE_ANDROID_ARCH_ABI}" STREQUAL "armeabi-v7a"))
+	set(ARCH_ARM32 TRUE)
+	message(STATUS "Building for Android (ARMv7, 32-bit, interpreter only).")
+	list(APPEND PCSX2_DEFS ARMSX2_ARM32=1 ARMSX2_NO_JIT=1 OVERRIDE_HOST_PAGE_SIZE=0x1000 OVERRIDE_HOST_CACHE_LINE_SIZE=64)
+	add_compile_options("-mfpu=neon" "-mfloat-abi=softfp")
 else()
 	message(FATAL_ERROR "Unsupported architecture: ${_PCSX2_TARGET_PROCESSOR}")
 endif()
