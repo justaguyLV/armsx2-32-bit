@@ -27,6 +27,8 @@ static constexpr bool IsDebugBuild = false;
 	#define ARCH_ARM64
 #elif defined(_M_X86) || defined(__x86_64__) || defined(__i386__)
 	#define ARCH_X86
+#elif defined(__arm__) || defined(ARMSX2_ARM32)
+	#define ARCH_ARM32
 #else
 	#error Unsupported Platform
 #endif

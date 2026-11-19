@@ -24,6 +24,12 @@ jobs:
           packages: platform-tools
       - name: Install NDK + CMake
         run: yes | sdkmanager "ndk;29.0.14206865" "cmake;3.31.6" >/dev/null || true
+      - name: Make ninja keep going after errors
+        run: |
+          B=$ANDROID_HOME/cmake/3.31.6/bin
+          mv $B/ninja $B/ninja.real
+          printf '#!/bin/sh\nexec %s/ninja.real -k 0 "$@"\n' "$B" > $B/ninja
+          chmod +x $B/ninja
       - name: Fetch shaderc deps
         run: python3 app/src/main/cpp/3rdparty/shaderc/utils/git-sync-deps
       - name: Rust target
@@ -37,7 +43,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           mkdir /tmp/out
-          grep -n -E "error:|FAILED|What went wrong|CMake Error|undefined|fatal" /tmp/build.log | head -150 > /tmp/out/errors.txt || true
+          grep -E "error:|CMake Error|undefined reference|fatal error" /tmp/build.log | sed 's#/home/runner/work/armsx2-32-bit/armsx2-32-bit/##' | cut -c1-260 | sort | uniq -c | sort -rn | head -250 > /tmp/out/errors.txt || true
           tail -n 120 /tmp/build.log > /tmp/out/tail.txt || true
           git config user.name ci; git config user.email ci@example.com
           git checkout --orphan buildlogs
