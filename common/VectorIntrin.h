@@ -51,6 +51,14 @@
 #include <arm_neon.h>
 #endif
 
+#if defined(ARCH_ARM32)
+// ARMv7 NEON lacks many AArch64-only intrinsics, so reuse the x86 SSE code paths through sse2neon.
+#define _M_SSE 0x401
+#define FAST_UNALIGNED 0
+#include <arm_neon.h>
+#include "common/sse2neon.h"
+#endif
+
 #ifdef __APPLE__
 #include <stdlib.h> // alloca
 #else

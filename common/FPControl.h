@@ -101,7 +101,7 @@ struct FPControlRegister
 	__fi constexpr bool operator==(const FPControlRegister& rhs) const { return bitmask == rhs.bitmask; }
 	__fi constexpr bool operator!=(const FPControlRegister& rhs) const { return bitmask != rhs.bitmask; }
 
-#elif defined(ARCH_ARM64)
+#elif defined(ARCH_ARM64) || defined(ARCH_ARM32)
 	u64 bitmask;
 
 	static constexpr u64 FZ_BIT = (0x1ULL << 24);
@@ -119,6 +119,10 @@ struct FPControlRegister
 		// MSVC's arm64 compiler doesn't accept GCC inline asm; read FPCR via the
 		// system-register intrinsic (ARM64_FPCR / _ReadStatusReg from <intrin.h>).
 		value = static_cast<u64>(_ReadStatusReg(ARM64_FPCR));
+#elif defined(ARCH_ARM32)
+		u32 v32;
+		asm volatile("vmrs %0, fpscr" : "=r"(v32));
+		value = v32;
 #else
 		asm volatile("\tmrs %0, FPCR\n"
 					 : "=r"(value));
@@ -130,6 +134,8 @@ struct FPControlRegister
 	{
 #if defined(_MSC_VER) && !defined(__clang__)
 		_WriteStatusReg(ARM64_FPCR, static_cast<__int64>(value.bitmask));
+#elif defined(ARCH_ARM32)
+		asm volatile("vmsr fpscr, %0" ::"r"(static_cast<u32>(value.bitmask)) : "memory");
 #else
 		// "memory": loads and stores of floating-point values must not move across the mode change.
 		asm volatile("\tmsr FPCR, %0\n" ::"r"(value.bitmask) : "memory");
