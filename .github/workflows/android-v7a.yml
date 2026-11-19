@@ -1,0 +1,42 @@
+name: Android armeabi-v7a
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: platforms/android
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install NDK + CMake
+        run: yes | sdkmanager "ndk;29.0.14206865" "cmake;3.31.6" >/dev/null || true
+      - name: Fetch shaderc deps
+        run: python3 app/src/main/cpp/3rdparty/shaderc/utils/git-sync-deps
+      - name: Rust target
+        run: rustup target add armv7-linux-androideabi
+      - name: Build debug APK
+        run: ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee /tmp/build.log
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: /tmp/build.log
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: armsx2-android-v7a
+          path: platforms/android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
