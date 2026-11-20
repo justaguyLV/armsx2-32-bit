@@ -9,6 +9,10 @@
 #include "GS/Renderers/SW/GSSetupPrimCodeGenerator.all.h"
 #include "GS/Renderers/SW/GSDrawScanlineCodeGenerator.all.h"
 #endif
+#ifdef ARCH_ARM32
+struct GSSetupPrimCodeGenerator;
+struct GSDrawScanlineCodeGenerator;
+#endif
 #ifdef ARCH_ARM64
 #include "GS/Renderers/SW/GSSetupPrimCodeGenerator.arm64.h"
 #include "GS/Renderers/SW/GSDrawScanlineCodeGenerator.arm64.h"
@@ -67,8 +71,13 @@ public:
 	static void CDrawScanline(int pixels, int left, int top, const GSVertexSW& scan, GSScanlineLocalData& local);
 
 private:
+#ifdef ARCH_ARM32
+	GSNullCodeGeneratorFunctionMap<u64, SetupPrimPtr> m_sp_map;
+	GSNullCodeGeneratorFunctionMap<u64, DrawScanlinePtr> m_ds_map;
+#else
 	GSCodeGeneratorFunctionMap<GSSetupPrimCodeGenerator, u64, SetupPrimPtr> m_sp_map;
 	GSCodeGeneratorFunctionMap<GSDrawScanlineCodeGenerator, u64, DrawScanlinePtr> m_ds_map;
+#endif
 
 	static void CDrawEdge(int pixels, int left, int top, const GSVertexSW& scan, GSScanlineLocalData& local);
 	__ri static void CDrawScanline(int pixels, int left, int top, const GSVertexSW& scan, GSScanlineLocalData& local, GSScanlineSelector sel);

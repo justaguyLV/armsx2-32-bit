@@ -247,3 +247,17 @@ public:
 		return ret;
 	}
 };
+
+// ARMv7 has no code generator for the software renderer: every lookup misses, so
+// callers fall back to the C++ rasteriser (GSDrawScanline::CSetupPrim / CDrawScanline).
+template <class KEY, class VALUE>
+class GSNullCodeGeneratorFunctionMap
+{
+public:
+	GSNullCodeGeneratorFunctionMap(const char*) {}
+	void Clear() {}
+	VALUE GetDefaultFunction(KEY) { return nullptr; }
+	VALUE Lookup(KEY, bool) { return nullptr; }
+	void UpdateStats(u64, u64, int, int, int) {}
+	void PrintStats() {}
+};
