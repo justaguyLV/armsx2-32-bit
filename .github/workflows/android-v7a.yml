@@ -36,7 +36,17 @@ jobs:
         run: rustup target add armv7-linux-androideabi
       - name: Build debug APK
         shell: bash
-        run: ./gradlew :app:assemblePlayDebug --stacktrace 2>&1 | tee /tmp/build.log
+        run: |
+          set -o pipefail
+          for i in 1 2 3 4; do
+            ./gradlew :app:assemblePlayDebug --stacktrace 2>&1 | tee -a /tmp/build.log && exit 0
+            if tail -n 400 /tmp/build.log | grep -q "Could not find\|Could not resolve\|Could not GET"; then
+              echo "Dependency download failed, retry $i"; sleep 45
+            else
+              exit 1
+            fi
+          done
+          exit 1
       - name: Publish log tail to buildlogs branch
         if: always()
         shell: bash
