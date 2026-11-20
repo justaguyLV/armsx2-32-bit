@@ -393,7 +393,7 @@ target_link_libraries(${ARMSX2_EMUCORE_LIBRARY_NAME} PRIVATE
 	libzip::zip
 	SDL3::SDL3
 	shaderc
-	vixl
+	$<$<NOT:$<STREQUAL:${CMAKE_ANDROID_ARCH_ABI},armeabi-v7a>>:vixl>
 	$<$<NOT:$<STREQUAL:${CMAKE_ANDROID_ARCH_ABI},armeabi-v7a>>:adrenotools>
 	Zstd::Zstd
 	libminiupnpc-static

@@ -206,6 +206,13 @@ bool SysMemory::AllocateMemoryMap()
 	}
 	else
 #endif
+#if defined(ARCH_ARM32)
+	{
+		// ARMv7 has no recompilers: stay in interpreter-only mode (no executable code memory).
+		s_code_memory = nullptr;
+		Console.WriteLn("[ARMv7] Interpreter-only mode: skipping code-memory allocation");
+	}
+#else
 	{
 		if (!(s_code_mapping_area = SharedMemoryMappingArea::Create(HostMemoryMap::CodeSize, true, kArenaBase ? kArenaBase + HostMemoryMap::MainSize : 0)))
 		{
@@ -221,9 +228,10 @@ bool SysMemory::AllocateMemoryMap()
 			return false;
 		}
 	}
+#endif // ARCH_ARM32
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) && !defined(ARCH_ARM32)
 	// FX-15 (design credit FEX-Emu): back the hot JIT code caches with
 	// transparent hugepages to cut iTLB pressure. madvise is what the
 	// Rocknix default THP mode ("madvise") honors, and the code half is a

@@ -1635,6 +1635,8 @@ if(ARCH_X86)
 elseif(ARCH_ARM64)
 	list(APPEND pcsx2LTOSources ${pcsx2arm64Sources} ${pcsx2arm64Headers})
 	target_link_libraries(PCSX2_FLAGS INTERFACE vixl)
+elseif(ARCH_ARM32)
+	list(APPEND pcsx2LTOSources arm32/RecStubs-arm32.cpp)
 endif()
 
 if(LTO_PCSX2_CORE)

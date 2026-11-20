@@ -53,7 +53,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           mkdir /tmp/out
-          grep -E "error:|CMake Error|undefined reference|fatal error" /tmp/build.log | sed 's#/home/runner/work/armsx2-32-bit/armsx2-32-bit/##' | cut -c1-260 | sort | uniq -c | sort -rn | head -250 > /tmp/out/errors.txt || true
+          grep -E "error:|CMake Error|undefined reference|undefined symbol|fatal error|referenced by" /tmp/build.log | sed 's#/home/runner/work/armsx2-32-bit/armsx2-32-bit/##' | cut -c1-260 | sort | uniq -c | sort -rn | head -250 > /tmp/out/errors.txt || true
           tail -n 120 /tmp/build.log > /tmp/out/tail.txt || true
           git config user.name ci; git config user.email ci@example.com
           git checkout --orphan buildlogs

@@ -90,6 +90,37 @@ asm(
 
 static_assert(fastjmp_buf::BUF_SIZE >= 176, "fastjmp_set stores up to byte 176");
 
+#elif defined(ARCH_ARM32)
+
+asm(
+	"\t.syntax unified\n"
+	"\t.text\n"
+	"\t.thumb\n"
+	"\t.global " PREFIX "fastjmp_set\n"
+	"\t.global " PREFIX "fastjmp_jmp\n"
+	"\t.p2align 2\n"
+	"\t.thumb_func\n"
+	"\t.type " PREFIX "fastjmp_set, %function\n"
+	"\t" PREFIX "fastjmp_set:" R"(
+	mov r12, sp
+	stmia r0!, {r4-r11, r12, lr}
+	vstmia r0!, {d8-d15}
+	movs r0, #0
+	bx lr
+)"
+	"\t.p2align 2\n"
+	"\t.thumb_func\n"
+	"\t.type " PREFIX "fastjmp_jmp, %function\n"
+	"\t" PREFIX "fastjmp_jmp:" R"(
+	ldmia r0!, {r4-r11, r12, lr}
+	mov sp, r12
+	vldmia r0!, {d8-d15}
+	mov r0, r1
+	bx lr
+)");
+
+static_assert(fastjmp_buf::BUF_SIZE >= 104, "fastjmp_set stores up to byte 104");
+
 #endif
 
 #endif // __WIN32
