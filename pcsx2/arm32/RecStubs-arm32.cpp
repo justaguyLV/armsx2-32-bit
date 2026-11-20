@@ -4,6 +4,8 @@
 // shared code makes to the recompiler providers and route everything to the interpreters.
 // SysMemory::HasCodeMemory() is false on this build, so VMManager never selects them anyway.
 
+#include "common/Assertions.h"
+#include "common/Console.h"
 #include "R5900.h"
 #include "R3000A.h"
 #include "VUmicro.h"
