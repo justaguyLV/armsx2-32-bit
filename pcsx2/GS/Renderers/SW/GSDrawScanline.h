@@ -5,7 +5,7 @@
 
 #include "GS/GSState.h"
 
-#if defined(ARCH_X86) || defined(ARCH_ARM32)
+#if defined(ARCH_X86)
 #include "GS/Renderers/SW/GSSetupPrimCodeGenerator.all.h"
 #include "GS/Renderers/SW/GSDrawScanlineCodeGenerator.all.h"
 #endif

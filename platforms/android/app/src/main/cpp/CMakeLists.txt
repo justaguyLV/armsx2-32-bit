@@ -33,7 +33,11 @@ set(ENABLE_QT_UI OFF CACHE BOOL "" FORCE)
 # This build has libadrenotools (added below), so the custom Vulkan driver
 # splice in VKLoader.cpp is compiled in. Other Android builds - the libretro
 # core the buildbot makes - do not.
-set(ARMSX2_USE_ADRENOTOOLS ON CACHE BOOL "" FORCE)
+if(CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
+	set(ARMSX2_USE_ADRENOTOOLS OFF CACHE BOOL "" FORCE)
+else()
+	set(ARMSX2_USE_ADRENOTOOLS ON CACHE BOOL "" FORCE)
+endif()
 
 # Same for the Oboe audio backend: SearchForStuff below adds the vendored
 # 3rdparty/oboe, and this is the only build that has it.
@@ -224,7 +228,9 @@ target_link_libraries(savers log GLESv2 m)
 
 
 
-add_subdirectory(3rdparty/adrenotools)
+if(NOT CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
+	add_subdirectory(3rdparty/adrenotools)
+endif()
 
 # miniupnpc, for remote play's online hosting: asks the host's router to open the stream's port
 # (remote_play_upnp.cpp). The static library only: the Android Gradle plugin packages every shared
@@ -388,7 +394,7 @@ target_link_libraries(${ARMSX2_EMUCORE_LIBRARY_NAME} PRIVATE
 	SDL3::SDL3
 	shaderc
 	vixl
-	adrenotools
+	$<$<NOT:$<STREQUAL:${CMAKE_ANDROID_ARCH_ABI},armeabi-v7a>>:adrenotools>
 	Zstd::Zstd
 	libminiupnpc-static
 	android

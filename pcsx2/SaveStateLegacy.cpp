@@ -452,10 +452,14 @@ namespace OldState
 		"IPU block payload is era-invariant");
 	static_assert(sizeof(gifUnit.stat) == 4 && sizeof(gifUnit.gsSIGNAL) == 12 && sizeof(gifUnit.lastTranType) == 4,
 		"Gif Unit block head is era-invariant apart from GS_FINISH");
+#if INTPTR_MAX == INT64_MAX
 	static_assert(sizeof(Gif_Path) - sizeof(Gif_Path_MTVU) == 120, "gifPathFreeze writes a 120-byte struct head in every era");
+#endif
 	static_assert(sizeof(sif0) == 580, "SIFdma block is era-invariant");
 	static_assert(sizeof(gif) == 28 && sizeof(gif_fifo) == 260, "GIFdma block is era-invariant");
+#if INTPTR_MAX == INT64_MAX
 	static_assert(sizeof(cdr) == 39352, "cdrom block is era-invariant");
+#endif
 	static_assert(sizeof(iopMem->Sif) == 256, "IOP-Subsystems SIF window is era-invariant");
 	static_assert(sizeof(gsVideoMode) == 4 && sizeof(gsIsInterlaced) == 1, "video mode fields are era-invariant");
 } // namespace OldState

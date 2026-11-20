@@ -834,7 +834,11 @@ public:
 
 	__forceinline GSVector4i sra64(s32 i) const
 	{
+#if defined(ARCH_ARM32)
+		return GSVector4i(vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(m), vdupq_n_s64(-static_cast<s64>(i)))));
+#else
 		return GSVector4i(_mm_sra_epi64(m, _mm_cvtsi32_si128(i)));
+#endif
 	}
 
 #if _M_SSE >= 0x501

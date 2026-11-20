@@ -3591,6 +3591,8 @@ void VMManager::LogCPUCapabilities()
 		extensions += "SVE ";
 	if (cpuinfo_has_arm_sve2())
 		extensions += "SVE2 ";
+#elif defined(ARCH_ARM32)
+	std::string extensions = "ARMv7 (interpreter only)";
 #endif
 
 	StringUtil::StripWhitespace(&extensions);

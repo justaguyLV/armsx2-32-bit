@@ -1111,8 +1111,12 @@ Java_kr_co_iefriends_pcsx2_NativeApp_setCustomVulkanDriver(
     // required=false: the app keeps its existing behaviour of falling through to the
     // system loader when the pack will not open, so a bad pack cannot leave the user
     // with an emulator that refuses to boot.
+#if defined(ARMSX2_USE_ADRENOTOOLS)
     Vulkan::SetCustomDriverPath(
         dir.c_str(), name.c_str(), redir.c_str(), hook.c_str(), /*required=*/false);
+#else
+    (void)dir; (void)name; (void)redir; (void)hook;
+#endif
 }
 
 extern "C"
@@ -3968,8 +3972,12 @@ static std::atomic<bool> s_gpu_offers_malisx2{false};
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_kr_co_iefriends_pcsx2_NativeApp_missingCpuFeature(JNIEnv* env, jclass) {
+#if defined(__aarch64__)
     const char* const missing = HostSys::GetMissingBuildCpuFeature();
     return missing ? env->NewStringUTF(missing) : nullptr;
+#else
+    return nullptr;
+#endif
 }
 
 extern "C"

@@ -112,10 +112,12 @@ public:
 	{
 	}
 
+#if !defined(ARCH_ARM32) // sse2neon aliases __m128d to __m128 on ARMv7
 	__forceinline explicit GSVector4(__m128d m)
 		: m(_mm_castpd_ps(m))
 	{
 	}
+#endif
 
 	__forceinline explicit GSVector4(float f)
 	{

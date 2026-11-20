@@ -57,6 +57,9 @@
 #define FAST_UNALIGNED 0
 #include <arm_neon.h>
 #include "common/sse2neon.h"
+#ifndef _MM_MK_INSERTPS_NDX
+#define _MM_MK_INSERTPS_NDX(srcField, dstField, zeroMask) (((srcField) << 6) | ((dstField) << 4) | (zeroMask))
+#endif
 #endif
 
 #ifdef __APPLE__
