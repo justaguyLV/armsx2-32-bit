@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Assertions.h"
+#if defined(__ANDROID__)
+#include <android/log.h>
+#endif
 #include "CrashHandler.h"
 #include "HostSys.h"
 #include "Threading.h"
