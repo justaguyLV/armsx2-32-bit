@@ -19,6 +19,10 @@
 #include <mutex>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <vector>
+#if defined(__ANDROID__)
+#include <android/log.h>
+#endif
 #ifdef __APPLE__
 #include <libkern/OSCacheControl.h>
 #include <TargetConditionals.h>
@@ -276,6 +280,81 @@ SharedMemoryMappingArea::~SharedMemoryMappingArea()
 }
 
 
+
+#if defined(ARCH_ARM32)
+// 32-bit processes already have much of the low 2 GB taken (ART heap, libraries, driver
+// reservations), so fixed-stride guesses miss. Read the real layout and return the start of
+// every free gap below 2 GB that can hold [size] plus a 1 MB safety margin on both sides.
+static std::vector<uptr> FindLowAddressGaps(size_t size)
+{
+	std::vector<uptr> gaps;
+	FILE* f = std::fopen("/proc/self/maps", "r");
+	if (!f)
+		return gaps;
+
+	constexpr uptr kLow = 0x01000000u;
+	constexpr uptr kHigh = 0x80000000u;
+	constexpr uptr kMargin = 0x100000u;
+
+	char line[512];
+	uptr prev_end = kLow;
+	while (std::fgets(line, sizeof(line), f))
+	{
+		unsigned long s = 0, e = 0;
+		if (std::sscanf(line, "%lx-%lx", &s, &e) != 2)
+			continue;
+		if (s > prev_end && s <= kHigh)
+		{
+			const uptr cand = prev_end + kMargin;
+			if (cand + size + kMargin <= s)
+				gaps.push_back(cand);
+		}
+		else if (s > kHigh && prev_end < kHigh)
+		{
+			const uptr cand = prev_end + kMargin;
+			if (cand + size + kMargin <= kHigh)
+				gaps.push_back(cand);
+		}
+		if (e > prev_end)
+			prev_end = e;
+		if (prev_end >= kHigh)
+			break;
+	}
+	if (prev_end < kHigh)
+	{
+		const uptr cand = prev_end + kMargin;
+		if (cand + size + kMargin <= kHigh)
+			gaps.push_back(cand);
+	}
+	std::fclose(f);
+	return gaps;
+}
+
+static void LogLowMapsToLogcat(size_t size)
+{
+#if defined(__ANDROID__)
+	__android_log_print(ANDROID_LOG_ERROR, "ARMSX2", "low-2GB reservation of %zu bytes failed; process map follows", size);
+	FILE* f = std::fopen("/proc/self/maps", "r");
+	if (!f)
+		return;
+	char line[512];
+	int n = 0;
+	while (std::fgets(line, sizeof(line), f) && n < 120)
+	{
+		unsigned long s = 0;
+		if (std::sscanf(line, "%lx-", &s) == 1 && s < 0x90000000ul)
+		{
+			__android_log_print(ANDROID_LOG_ERROR, "ARMSX2", "maps: %s", line);
+			n++;
+		}
+	}
+	std::fclose(f);
+#else
+	(void)size;
+#endif
+}
+#endif
+
 std::unique_ptr<SharedMemoryMappingArea> SharedMemoryMappingArea::Create(size_t size, bool jit, uptr fixed_base_hint)
 {
 	pxAssertRel(Common::IsAlignedPow2(size, __pagesize), "Size is page aligned");
@@ -296,13 +375,32 @@ std::unique_ptr<SharedMemoryMappingArea> SharedMemoryMappingArea::Create(size_t 
 
 	void* alloc = MAP_FAILED;
 
+#if defined(ARCH_ARM32)
+	if (fixed_base_hint != 0)
+	{
+		for (const uptr cand : FindLowAddressGaps(size))
+		{
+			void* const want = reinterpret_cast<void*>(cand);
+			void* const got = mmap(want, size, prot, flags, -1, 0);
+			if (got == MAP_FAILED)
+				continue;
+			if (got == want)
+			{
+				alloc = got;
+				break;
+			}
+			munmap(got, size);
+		}
+	}
+#endif
+
 	// Deterministic VA placement for the on-disk VU program cache: when a
 	// fixed base hint is given, try it (plus 256MB-stride fallback slots) with a
 	// hint-and-verify mmap (no MAP_FIXED, so we never clobber an existing
 	// mapping). If none of the slots land exactly, fall through to kernel
 	// placement — the program cache records the arena base and simply misses on
 	// a mismatch, so this trades determinism for booting, never correctness.
-	if (fixed_base_hint != 0)
+	if (fixed_base_hint != 0 && alloc == MAP_FAILED)
 	{
 		for (int slot = 0; slot <= 10; slot++)
 		{
@@ -332,6 +430,7 @@ std::unique_ptr<SharedMemoryMappingArea> SharedMemoryMappingArea::Create(size_t 
 	{
 		std::fprintf(stderr, "@@HOST_MMAP_FAIL@@ op=reserve_low size=%zu got=%p (needs <2GB for VTLB)\n", size, alloc);
 		munmap(alloc, size);
+		LogLowMapsToLogcat(size);
 		return nullptr;
 	}
 #endif
