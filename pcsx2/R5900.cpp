@@ -508,11 +508,57 @@ static __fi void eeScheduleForIop(s32 skew)
 	}
 }
 
+
+#if defined(__ANDROID__) && defined(ARCH_ARM32)
+#include <android/log.h>
+#include <unistd.h>
+// ARMv7 diagnostic: the event test's return address has been seen overwritten with a stack address
+// on the Android pause path. Snapshot the frame's saved registers on entry, report any change at
+// the checkpoints below, and restore the return address so the run can carry on.
+namespace
+{
+	struct EventTestFrameGuard
+	{
+		void** fp;
+		void* ra;
+		void* saved[9]; // fp[-7] .. fp[1]: r8 sb sl r11 r4 r5 r6 r7 lr
+		explicit EventTestFrameGuard(void* frame, void* return_address)
+			: fp(static_cast<void**>(frame))
+			, ra(return_address)
+		{
+			for (int i = 0; i < 9; i++)
+				saved[i] = fp[i - 7];
+		}
+		void Check(const char* where)
+		{
+			bool bad = false;
+			for (int i = 0; i < 9; i++)
+				bad |= (fp[i - 7] != saved[i]);
+			if (!bad && fp[1] == ra)
+				return;
+			__android_log_print(ANDROID_LOG_ERROR, "ARMSX2", "FRAMEGUARD corrupted at '%s' tid=%d fp=%p ra=%p", where, static_cast<int>(gettid()), static_cast<void*>(fp), ra);
+			for (int i = 0; i < 9; i++)
+			{
+				if (fp[i - 7] != saved[i])
+					__android_log_print(ANDROID_LOG_ERROR, "ARMSX2", "  slot fp%+d: was %p now %p", (i - 7) * 4, saved[i], fp[i - 7]);
+			}
+			fp[1] = ra; // restore the return address only
+		}
+		~EventTestFrameGuard() { Check("exit"); }
+	};
+}
+#define ET_GUARD_INIT() EventTestFrameGuard et_guard(__builtin_frame_address(0), __builtin_return_address(0))
+#define ET_GUARD_CHECK(where) et_guard.Check(where)
+#else
+#define ET_GUARD_INIT() ((void)0)
+#define ET_GUARD_CHECK(where) ((void)0)
+#endif
 // Shared portion of the branch test, called from both the Interpreter
 // and the recompiler.
 template <IopThreadMode M>
 __fi void _cpuEventTest_Shared()
 {
+	ET_GUARD_INIT();
 #ifdef PCSX2_RECOMPILER_TESTS
 	g_twinEeEventTests++;
 #endif
@@ -571,6 +617,7 @@ __fi void _cpuEventTest_Shared()
 	}
 
 	iopRunSliceForEE<M>();
+	ET_GUARD_CHECK("after iopRunSliceForEE");
 
 	if (cpuTestCycle(nextStartCounter, nextDeltaCounter))
 	{
@@ -578,6 +625,7 @@ __fi void _cpuEventTest_Shared()
 		_cpuTestPERF();
 	}
 
+	ET_GUARD_CHECK("after rcntUpdate");
 	_cpuTestTIMR();
 
 	// ---- Interrupts -------------
@@ -598,6 +646,8 @@ __fi void _cpuEventTest_Shared()
 		else
 			_cpuTestInterrupts();
 	}
+
+	ET_GUARD_CHECK("after interrupts");
 
 #if defined(__ANDROID__)
 	// Android pause/stop requests can be pumped during the counter/vsync work
