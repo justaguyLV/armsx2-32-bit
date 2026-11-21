@@ -110,6 +110,9 @@ void pxOnAssertFail(const char* file, int line, const char* func, const char* ms
 		TerminateProcess(GetCurrentProcess(), 0xBAADC0DE);
 	}
 #else
+#if defined(__ANDROID__)
+	__android_log_write(ANDROID_LOG_FATAL, "ARMSX2", full_msg);
+#endif
 	fputs(full_msg, stderr);
 	fputs("\nAborting application.\n", stderr);
 	fflush(stderr);

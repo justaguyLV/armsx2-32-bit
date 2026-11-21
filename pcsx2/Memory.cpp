@@ -121,6 +121,8 @@ bool SysMemory::AllocateMemoryMap()
 	// directly after the data area, reproducing a contiguous arena when both land.
 #if defined(__aarch64__) || defined(_M_ARM64)
 	constexpr uptr kArenaBase = 0x100000000ull; // 4GB
+#elif defined(ARCH_ARM32)
+	constexpr uptr kArenaBase = 0x10000000u; // 256MB; slots walk up in 256MB steps, all kept below 2GB
 #else
 	constexpr uptr kArenaBase = 0;
 #endif

@@ -88,3 +88,23 @@ jobs:
           name: armsx2-android-v7a
           path: platforms/android/app/build/outputs/apk/**/*.apk
           if-no-files-found: warn
+  release:
+    needs: build
+    if: success()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: armsx2-android-v7a
+          path: apk
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          APK=$(find apk -name '*.apk' | head -n1)
+          cp "$APK" ARMSX2-armv7-interpreter-debug.apk
+          gh release create "v7a-build-${{ github.run_number }}" ARMSX2-armv7-interpreter-debug.apk \
+            --repo "${{ github.repository }}" \
+            --title "ARMSX2 ARMv7 build ${{ github.run_number }}" \
+            --notes "Experimental 32-bit ARM build, interpreter only. Commit ${{ github.sha }}." \
+            --prerelease

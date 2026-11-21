@@ -307,6 +307,12 @@ std::unique_ptr<SharedMemoryMappingArea> SharedMemoryMappingArea::Create(size_t 
 		for (int slot = 0; slot <= 10; slot++)
 		{
 			void* const want = reinterpret_cast<void*>(fixed_base_hint + (static_cast<uptr>(slot) << 28));
+#if defined(ARCH_ARM32)
+			// VTLB keeps the top bit of a host pointer free as its "handler" flag, so every
+			// guest-memory pointer must be below 2 GB.
+			if (reinterpret_cast<uptr>(want) + size > 0x80000000u)
+				break;
+#endif
 			void* const got = mmap(want, size, prot, flags, -1, 0);
 			if (got == MAP_FAILED)
 				continue;
@@ -321,6 +327,14 @@ std::unique_ptr<SharedMemoryMappingArea> SharedMemoryMappingArea::Create(size_t 
 
 	if (alloc == MAP_FAILED)
 		alloc = mmap(nullptr, size, prot, flags, -1, 0);
+#if defined(ARCH_ARM32)
+	if (alloc != MAP_FAILED && fixed_base_hint != 0 && reinterpret_cast<uptr>(alloc) + size > 0x80000000u)
+	{
+		std::fprintf(stderr, "@@HOST_MMAP_FAIL@@ op=reserve_low size=%zu got=%p (needs <2GB for VTLB)\n", size, alloc);
+		munmap(alloc, size);
+		return nullptr;
+	}
+#endif
 	if (alloc == MAP_FAILED)
 	{
 		const int err = errno;
