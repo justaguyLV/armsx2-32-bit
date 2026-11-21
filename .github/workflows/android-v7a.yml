@@ -47,6 +47,25 @@ jobs:
             fi
           done
           exit 1
+      - name: Keep unstripped emucore for symbolizing crashes
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/sym
+          : > /tmp/sym/ids.txt
+          for f in $(find platforms/android/app/build -name 'libemucore_4k.so' -path '*armeabi-v7a*' 2>/dev/null); do
+            n=$(readelf -S "$f" | grep -c '\.symtab' || true)
+            echo "$f buildid=$(readelf -n "$f" | grep 'Build ID' | awk '{print $3}') symtab=$n size=$(stat -c %s "$f")" >> /tmp/sym/ids.txt
+            if [ "$n" -gt 0 ] && [ ! -f /tmp/sym/libemucore_4k.so ]; then cp "$f" /tmp/sym/libemucore_4k.so; fi
+          done
+          cat /tmp/sym/ids.txt
+      - name: Upload unstripped emucore
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emucore-unstripped
+          path: /tmp/sym/libemucore_4k.so
+          if-no-files-found: warn
       - name: Publish log tail to buildlogs branch
         if: always()
         shell: bash
@@ -55,11 +74,12 @@ jobs:
           mkdir /tmp/out
           grep -E "error:|CMake Error|undefined reference|undefined symbol|fatal error|referenced by" /tmp/build.log | sed 's#/home/runner/work/armsx2-32-bit/armsx2-32-bit/##' | cut -c1-260 | sort | uniq -c | sort -rn | head -250 > /tmp/out/errors.txt || true
           tail -n 120 /tmp/build.log > /tmp/out/tail.txt || true
+          cp /tmp/sym/ids.txt /tmp/out/ids.txt || true
           git config user.name ci; git config user.email ci@example.com
           git checkout --orphan buildlogs
           git rm -rf . >/dev/null 2>&1 || true
           cp /tmp/out/* .
-          git add errors.txt tail.txt
+          git add errors.txt tail.txt ids.txt
           git commit -qm "log for ${GITHUB_SHA}"
           git push -f origin buildlogs
       - name: Upload APK
