@@ -1,0 +1,120 @@
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:74:2: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:    74 |         EEFPU_MODEL_CALL u32 RecipSqrt(u32 a, u32 t);
+C/C++:       |         ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:95:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:    95 |                 EEFPU_MODEL_CALL u64 Divide(u64 fs, u64 ft);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:96:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:    96 |                 EEFPU_MODEL_CALL u64 Sqrt(u64 ft);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:97:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:    97 |                 EEFPU_MODEL_CALL u64 RecipSqrt(u64 fs, u64 ft);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:102:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:   102 |                 EEFPU_MODEL_CALL u64 MulDeficit(u64 fs, u64 ft, u64 product);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: In file included from /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/DebugTools/DisR5900asm.cpp:7:
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/R5900OpcodeTables.h:1078:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:  1078 |                 EEFPU_MODEL_CALL bool eeMulOneUlpLow(u32 fs, u32 ft);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: In file included from /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/DebugTools/DisR5900asm.cpp:7:
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/R5900OpcodeTables.h:1086:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:  1086 |                 EEFPU_MODEL_CALL u32 eeDivide(u32 fs, u32 ft);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: In file included from /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/DebugTools/DisR5900asm.cpp:7:
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/R5900OpcodeTables.h:1087:3: warning: 'preserve_all' calling convention is not supported for this target [-Wignored-attributes]
+C/C++:  1087 |                 EEFPU_MODEL_CALL u32 eeSqrtBits(u32 ft);
+C/C++:       |                 ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/EeFpuModel.h:23:41: note: expanded from macro 'EEFPU_MODEL_CALL'
+C/C++:    23 | #define EEFPU_MODEL_CALL __attribute__((preserve_all))
+C/C++:       |                                         ^
+C/C++: 12 warnings generated.
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/ImGui/ImGuiFullscreen_Keyboard.cpp:103:66: warning: bitwise operation between different enumeration types ('ImGuiInputFlags_' and 'ImGuiInputFlagsPrivate_') is deprecated [-Wdeprecated-enum-enum-conversion]
+C/C++:   103 |                 constexpr ImGuiInputFlags MOVE_REPEAT = ImGuiInputFlags_Repeat | ImGuiInputFlags_RepeatRateNavMove;
+C/C++:       |                                                         ~~~~~~~~~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/Catalog/DriverPacks.cpp:62:20: warning: unused variable 'MAX_CHECKSUM_BYTES' [-Wunused-const-variable]
+C/C++:    62 |                 constexpr size_t MAX_CHECKSUM_BYTES = 4096;
+C/C++:       |                                  ^~~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/Catalog/DriverPacks.cpp:63:17: warning: unused variable 'MAX_ARCHIVE_BYTES' [-Wunused-const-variable]
+C/C++:    63 |                 constexpr u64 MAX_ARCHIVE_BYTES = 512ull << 20;
+C/C++:       |                               ^~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/Catalog/DriverPacks.cpp:1647:8: warning: unused variable 's_relaunch_registered' [-Wunused-variable]
+C/C++:  1647 |                 bool s_relaunch_registered = false;
+C/C++:       |                      ^~~~~~~~~~~~~~~~~~~~~
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/ps2/Iop/IopHwRead.cpp:11:
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/DEV9/DEV9.h:22:9: warning: '__inline' macro redefined [-Wmacro-redefined]
+C/C++:    22 | #define __inline inline
+C/C++:       |         ^
+C/C++: /usr/local/lib/android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/cdefs.h:95:9: note: previous definition is here
+C/C++:    95 | #define __inline __inline__
+C/C++:       |         ^
+C/C++: 1 warning generated.
+C/C++: In file included from /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/ps2/Iop/IopHwWrite.cpp:13:
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/pcsx2/DEV9/DEV9.h:22:9: warning: '__inline' macro redefined [-Wmacro-redefined]
+C/C++:    22 | #define __inline inline
+C/C++:       |         ^
+C/C++: /usr/local/lib/android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/cdefs.h:95:9: note: previous definition is here
+C/C++:    95 | #define __inline __inline__
+C/C++:       |         ^
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/src/main/cpp/native-lib.cpp:194:15: warning: unused variable 'env_main' [-Wunused-variable]
+C/C++:   194 | static JNIEnv env_main;
+C/C++:       |               ^~~~~~~~
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/src/main/cpp/native-lib.cpp:3902:12: warning: unused variable 's_dump_frame_number' [-Wunused-variable]
+C/C++:  3902 | static u32 s_dump_frame_number = 0;
+C/C++:       |            ^~~~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/src/main/cpp/native-lib.cpp:3903:12: warning: unused variable 's_loop_number' [-Wunused-variable]
+C/C++:  3903 | static u32 s_loop_number = s_loop_count;
+C/C++:       |            ^~~~~~~~~~~~~
+C/C++: 3 warnings generated.
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/src/main/cpp/3rdparty/demangler/testsuite/test-demangle.c:52:1: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+C/C++:    52 | get_line(buf)
+C/C++:       | ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/src/main/cpp/3rdparty/demangler/testsuite/test-demangle.c:137:1: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+C/C++:   137 | fail (lineno, opts, in, out, exp)
+C/C++:       | ^
+C/C++: /home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/src/main/cpp/3rdparty/demangler/testsuite/test-demangle.c:173:1: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+C/C++:   173 | main(argc, argv)
+C/C++:       | ^
+C/C++: 3 warnings generated.
+
+> Task :app:dexBuilderPlayDebug
+> Task :app:mergePlayDebugJniLibFolders
+> Task :app:mergeProjectDexPlayDebug
+> Task :app:validateSigningPlayDebug
+> Task :app:writePlayDebugAppMetadata
+> Task :app:writePlayDebugSigningConfigVersions
+> Task :app:mergePlayDebugNativeLibs
+> Task :app:stripPlayDebugDebugSymbols
+> Task :app:packagePlayDebug
+> Task :app:createPlayDebugApkListingFileRedirect
+> Task :app:assemblePlayDebug
+
+[Incubating] Problems report is available at: file:///home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 13m 3s
+43 actionable tasks: 43 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.4.1/userguide/configuration_cache_enabling.html

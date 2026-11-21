@@ -1,0 +1,3 @@
+/home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/build/intermediates/merged_native_libs/playDebug/mergePlayDebugNativeLibs/out/lib/armeabi-v7a/libemucore_4k.so buildid=f2d817648df9c8a03eac310e0f9b6ba1a9659af3 symtab=1 size=386609396
+/home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/build/intermediates/cxx/Debug/6k1n3w36/obj/armeabi-v7a/libemucore_4k.so buildid=f2d817648df9c8a03eac310e0f9b6ba1a9659af3 symtab=1 size=386609396
+/home/runner/work/armsx2-32-bit/armsx2-32-bit/platforms/android/app/build/intermediates/stripped_native_libs/playDebug/stripPlayDebugDebugSymbols/out/lib/armeabi-v7a/libemucore_4k.so buildid=f2d817648df9c8a03eac310e0f9b6ba1a9659af3 symtab=0 size=20809364
