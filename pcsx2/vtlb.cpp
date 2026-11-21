@@ -121,7 +121,15 @@ vtlb_private::VTLBVirtual::VTLBVirtual(VTLBPhysical phys, u32 paddr, u32 vaddr)
 {
 	pxAssertMsg(0 == (paddr & VTLB_PAGE_MASK), "Should be page aligned");
 	pxAssertMsg(0 == (vaddr & VTLB_PAGE_MASK), "Should be page aligned");
+#if defined(ARCH_ARM32)
+	// On 32-bit the sign bit is also the "handler" flag, so a handler entry only has 31 bits left for
+	// the physical address. Anything above 2 GB is unmapped space (paddr is just the faulting vaddr
+	// there), and the address is only used for diagnostics, so dropping the top bit is harmless.
+	if (phys.isHandler())
+		paddr &= static_cast<u32>(~POINTER_SIGN_BIT);
+#else
 	pxAssertMsg((uptr)paddr < POINTER_SIGN_BIT, "Address too high");
+#endif
 	if (phys.isHandler())
 	{
 		value = phys.raw() + paddr - vaddr;
