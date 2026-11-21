@@ -50,10 +50,11 @@ jobs:
       - name: Keep unstripped emucore for symbolizing crashes
         if: always()
         shell: bash
+        working-directory: ${{ github.workspace }}
         run: |
           mkdir -p /tmp/sym
           : > /tmp/sym/ids.txt
-          for f in $(find platforms/android/app/build -name 'libemucore_4k.so' -path '*armeabi-v7a*' 2>/dev/null); do
+          for f in $(find "$GITHUB_WORKSPACE/platforms/android/app/build" -name 'libemucore_4k.so' -path '*armeabi-v7a*' 2>/dev/null); do
             n=$(readelf -S "$f" | grep -c '\.symtab' || true)
             echo "$f buildid=$(readelf -n "$f" | grep 'Build ID' | awk '{print $3}') symtab=$n size=$(stat -c %s "$f")" >> /tmp/sym/ids.txt
             if [ "$n" -gt 0 ] && [ ! -f /tmp/sym/libemucore_4k.so ]; then cp "$f" /tmp/sym/libemucore_4k.so; fi
@@ -90,7 +91,7 @@ jobs:
           if-no-files-found: warn
   release:
     needs: build
-    if: success()
+    if: success() && !contains(github.event.head_commit.message, '[no-release]')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@v4
