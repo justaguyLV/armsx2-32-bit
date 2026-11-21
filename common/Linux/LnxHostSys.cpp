@@ -8,7 +8,9 @@
 #include "common/Error.h"
 #include "common/HostSys.h"
 
+#include <algorithm>
 #include <atomic>
+#include <string>
 #include <cstdio>
 #include <csignal>
 #include <cerrno>
@@ -352,6 +354,55 @@ static void LogLowMapsToLogcat(size_t size)
 #else
 	(void)size;
 #endif
+}
+#endif
+
+#if defined(ARCH_ARM32)
+// Human-readable summary of the free address space below 2 GB, shown in the "failed to map" dialog.
+std::string ARMSX2_DescribeLowAddressSpace(size_t need)
+{
+	FILE* f = std::fopen("/proc/self/maps", "r");
+	if (!f)
+		return "(cannot read /proc/self/maps)";
+
+	constexpr unsigned long kLow = 0x01000000ul;
+	constexpr unsigned long kHigh = 0x80000000ul;
+	struct Gap { unsigned long start, size; };
+	std::vector<Gap> gaps;
+	unsigned long prev_end = kLow;
+	unsigned long total_free = 0;
+	int maps = 0;
+	char line[512];
+	while (std::fgets(line, sizeof(line), f))
+	{
+		unsigned long s = 0, e = 0;
+		if (std::sscanf(line, "%lx-%lx", &s, &e) != 2)
+			continue;
+		maps++;
+		const unsigned long cap = (s > kHigh) ? kHigh : s;
+		if (cap > prev_end)
+		{
+			gaps.push_back({prev_end, cap - prev_end});
+			total_free += cap - prev_end;
+		}
+		if (e > prev_end)
+			prev_end = e;
+		if (prev_end >= kHigh)
+			break;
+	}
+	if (prev_end < kHigh)
+	{
+		gaps.push_back({prev_end, kHigh - prev_end});
+		total_free += kHigh - prev_end;
+	}
+	std::fclose(f);
+
+	std::sort(gaps.begin(), gaps.end(), [](const Gap& a, const Gap& b) { return a.size > b.size; });
+	std::string out = fmt::format("need {} MB; free below 2GB: {} MB in {} gaps; largest:", need >> 20, total_free >> 20, gaps.size());
+	for (size_t i = 0; i < gaps.size() && i < 4; i++)
+		out += fmt::format(" 0x{:x}+{}MB", gaps[i].start, gaps[i].size >> 20);
+	out += fmt::format("; maps={}", maps);
+	return out;
 }
 #endif
 

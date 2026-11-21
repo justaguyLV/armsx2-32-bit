@@ -99,6 +99,10 @@ namespace HostMemoryMap
 	}
 } // namespace HostMemoryMap
 
+#if defined(ARCH_ARM32)
+extern std::string ARMSX2_DescribeLowAddressSpace(size_t need);
+#endif
+
 bool SysMemory::AllocateMemoryMap()
 {
 	s_data_memory_file_handle = HostSys::CreateSharedMemory(HostSys::GetFileMappingName("pcsx2").c_str(), HostMemoryMap::MainSize);
@@ -130,7 +134,11 @@ bool SysMemory::AllocateMemoryMap()
 	Console.WriteLn("@@MAC_MEMMAP@@ data_area_begin size=%zu", static_cast<size_t>(HostMemoryMap::MainSize));
 	if (!(s_memory_mapping_area = SharedMemoryMappingArea::Create(HostMemoryMap::MainSize, false, kArenaBase)))
 	{
+#if defined(ARCH_ARM32)
+		Host::ReportErrorAsync("Error", std::string("Failed to map main memory. ") + ARMSX2_DescribeLowAddressSpace(HostMemoryMap::MainSize));
+#else
 		Host::ReportErrorAsync("Error", "Failed to map main memory.");
+#endif
 		ReleaseMemoryMap();
 		return false;
 	}
